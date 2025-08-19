@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smooth Scroll Frames</title>
+ <style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 400vh; /* scroll space for frames */
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #frameContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;       /* full viewport width */
+    height: 100vh;      /* full viewport height */
+    overflow: hidden;
+  }
+
+  #frameContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* scales frames to fit inside container without stretching */
+    display: block;
+  }
+</style>
+>
+</head>
+<body>
+
+  <div id="frameContainer">
+    <img id="scrollFrame" src="frames/ezgif-frame-001.jpg" alt="Frame">
+  </div>
+
+  <script>
+    const totalFrames = 200;
+    const frameContainer = document.getElementById('scrollFrame');
+    let targetFrame = 1;
+    let currentFrame = 1;
+
+    function pad(num, size) {
+      let s = "000" + num;
+      return s.substr(s.length - size);
+    }
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const maxScroll = document.body.scrollHeight - window.innerHeight;
+      const scrollFraction = scrollTop / maxScroll;
+
+      targetFrame = Math.min(
+        totalFrames,
+        Math.floor(scrollFraction * totalFrames) + 1
+      );
+    });
+
+    function smoothUpdate() {
+      currentFrame += (targetFrame - currentFrame) * 0.1; // easing
+      frameContainer.src = `frames/ezgif-frame-${pad(Math.floor(currentFrame), 3)}.jpg`;
+      requestAnimationFrame(smoothUpdate);
+    }
+
+    smoothUpdate();
+  </script>
+
+</body>
+</html>
