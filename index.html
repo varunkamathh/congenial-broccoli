@@ -65,7 +65,9 @@
     const totalFrames = 150; // adjust if you have more/less
     const frameElement = document.getElementById("scrollFrame");
     const bgAudio = document.getElementById("bgAudio");
+    bgAudio.volume = 0.5; // adjust volume as needed
     const scrollAudio = document.getElementById("scrollAudio");
+    scrollAudio.volume = 1.0
     const playAudioBtn = document.getElementById("playAudioBtn");
     let audioStarted = false;
 
