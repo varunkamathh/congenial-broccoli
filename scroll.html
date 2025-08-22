@@ -12,6 +12,30 @@
       background: #000;
     }
 
+    /* Loader Styles */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #fff;
+      font-size: 1.5rem;
+      z-index: 2000;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    #progress-text {
+      margin-top: 10px;
+      font-size: 1.2rem;
+    }
+
+    /* Frame Container */
     #frameContainer {
       position: fixed;
       top: 50%;
@@ -20,6 +44,7 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
+      display: none; /* hidden until loaded */
     }
 
     #frameContainer img {
@@ -29,6 +54,7 @@
       display: block;
     }
 
+    /* Play Button */
     #playAudioBtn {
       position: fixed;
       bottom: 20px;
@@ -44,6 +70,12 @@
   </style>
 </head>
 <body>
+  <!-- Loader -->
+  <div id="loader">
+    <div>Loading...</div>
+    <div id="progress-text">0%</div>
+  </div>
+
   <!-- Background Audio -->
   <audio id="bgAudio" src="audio/background.m4a" loop hidden></audio>
   <button id="playAudioBtn">Play Audio</button>
@@ -62,14 +94,19 @@
   
   <script>
     // --- CONFIG ---
-    const totalFrames = 150; // adjust if you have more/less
+    const totalFrames = 150; 
     const frameElement = document.getElementById("scrollFrame");
     const bgAudio = document.getElementById("bgAudio");
-    bgAudio.volume = 0.5; // adjust volume as needed
+    bgAudio.volume = 0.2; 
     const scrollAudio = document.getElementById("scrollAudio");
-    scrollAudio.volume = 1.0
+    scrollAudio.volume = 1.0;
     const playAudioBtn = document.getElementById("playAudioBtn");
+    const loader = document.getElementById("loader");
+    const progressText = document.getElementById("progress-text");
+    const frameContainer = document.getElementById("frameContainer");
+
     let audioStarted = false;
+    let loadedFrames = 0;
 
     // --- HELPERS ---
     function pad(num, size) {
@@ -80,6 +117,19 @@
       for (let i = 1; i <= totalFrames; i++) {
         const img = new Image();
         img.src = `frames/ezgif-frame-${pad(i, 3)}.png`;
+
+        img.onload = () => {
+          loadedFrames++;
+          let percent = Math.floor((loadedFrames / totalFrames) * 100);
+          progressText.textContent = `${percent}%`;
+
+          if (loadedFrames === totalFrames) {
+            // Fade out loader
+            loader.style.opacity = "0";
+            loader.style.visibility = "hidden";
+            frameContainer.style.display = "block";
+          }
+        };
       }
     }
     preloadImages();
