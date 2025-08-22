@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smooth Scroll Frames with GSAP</title>
   <style>
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
-      height: 400vh; /* enough scroll space */
+      height: 400dvh; /* enough scroll space */
       background: #000;
+      overflow-x: hidden; /* prevent sideways scroll */
+      -webkit-overflow-scrolling: touch;
     }
 
     /* Loader Styles */
@@ -18,21 +20,21 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%;
+      height: 100dvh;
       background: #000;
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
       color: #fff;
-      font-size: 1.5rem;
+      font-size: clamp(1rem, 4vw, 1.5rem);
       z-index: 2000;
       transition: opacity 0.8s ease, visibility 0.8s ease;
     }
 
     #progress-text {
       margin-top: 10px;
-      font-size: 1.2rem;
+      font-size: clamp(0.9rem, 3vw, 1.2rem);
     }
 
     /* Black Overlay (fades away on scroll) */
@@ -41,7 +43,7 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%;
+      height: 100dvh;
       background: #000;
       z-index: 1400;
       pointer-events: none;
@@ -53,7 +55,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 2rem;
+      font-size: clamp(1.2rem, 5vw, 2rem);
       font-weight: bold;
       color: #fff;
       z-index: 1500;
@@ -61,6 +63,7 @@
       transition: opacity 1s ease;
       pointer-events: none;
       text-align: center;
+      padding: 0 10px; /* prevent text cutoff on small screens */
     }
 
     /* Frame Container */
@@ -70,7 +73,7 @@
       left: 50%;
       transform: translate(-50%, -50%);
       width: 100vw;
-      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
       display: none; /* hidden until loaded */
       z-index: 100;
@@ -92,9 +95,11 @@
       background: transparent;
       border: none;
       color: #fff;
-      font-size: 16px;
+      font-size: clamp(0.9rem, 3vw, 1rem);
       outline: 2px solid #fff;
       cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 6px;
     }
   </style>
 </head>
