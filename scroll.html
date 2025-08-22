@@ -35,6 +35,34 @@
       font-size: 1.2rem;
     }
 
+    /* Black Overlay (fades away on scroll) */
+    #blackOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 1400;
+      pointer-events: none;
+    }
+
+    /* Intro Text */
+    #introText {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      font-weight: bold;
+      color: #fff;
+      z-index: 1500;
+      opacity: 0;
+      transition: opacity 1s ease;
+      pointer-events: none;
+      text-align: center;
+    }
+
     /* Frame Container */
     #frameContainer {
       position: fixed;
@@ -45,6 +73,7 @@
       height: 100vh;
       overflow: hidden;
       display: none; /* hidden until loaded */
+      z-index: 100;
     }
 
     #frameContainer img {
@@ -59,7 +88,7 @@
       position: fixed;
       bottom: 20px;
       left: 20px;
-      z-index: 10;
+      z-index: 1600;
       background: transparent;
       border: none;
       color: #fff;
@@ -75,6 +104,10 @@
     <div>Loading...</div>
     <div id="progress-text">0%</div>
   </div>
+
+  <!-- Black Overlay + Intro Text -->
+  <div id="blackOverlay"></div>
+  <div id="introText">Scroll up for experience</div>
 
   <!-- Background Audio -->
   <audio id="bgAudio" src="audio/background.m4a" loop hidden></audio>
@@ -104,6 +137,8 @@
     const loader = document.getElementById("loader");
     const progressText = document.getElementById("progress-text");
     const frameContainer = document.getElementById("frameContainer");
+    const introText = document.getElementById("introText");
+    const blackOverlay = document.getElementById("blackOverlay");
 
     let audioStarted = false;
     let loadedFrames = 0;
@@ -128,6 +163,33 @@
             loader.style.opacity = "0";
             loader.style.visibility = "hidden";
             frameContainer.style.display = "block";
+
+            // Show intro text after loader
+            setTimeout(() => {
+              introText.style.opacity = "1";
+            }, 500);
+
+            // Animate overlay fade on scroll
+            gsap.to(blackOverlay, {
+              opacity: 0,
+              scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "20% top",
+                scrub: true
+              }
+            });
+
+            // Fade out intro text with scroll
+            gsap.to(introText, {
+              opacity: 0,
+              scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "20% top",
+                scrub: true
+              }
+            });
           }
         };
       }
@@ -146,8 +208,8 @@
         bgAudio.play().catch(() => {});
         playAudioBtn.style.display = "none";
         audioStarted = true;
-        window.removeEventListener("scroll", onFirstScroll);
       }
+      window.removeEventListener("scroll", onFirstScroll);
     });
 
     // --- SCROLL FRAMES + AUDIO ---
