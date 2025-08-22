@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smooth Scroll Frames with GSAP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Nata+Sans:wght@100..900&display=swap" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
@@ -55,8 +58,9 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: clamp(1.2rem, 5vw, 2rem);
-      font-weight: bold;
+      font-family: "Nata Sans", sans-serif;
+      font-weight: 600;
+      font-size: 3vw;
       color: #fff;
       z-index: 1500;
       opacity: 0;
@@ -112,7 +116,7 @@
 
   <!-- Black Overlay + Intro Text -->
   <div id="blackOverlay"></div>
-  <div id="introText">Scroll up for experience</div>
+  <div id="introText">Experience tranquility.</div>
 
   <!-- Background Audio -->
   <audio id="bgAudio" src="audio/background.m4a" loop hidden></audio>
