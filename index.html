@@ -14,26 +14,42 @@
 
     #frameContainer {
       position: fixed;
-      top: 0;
-      left: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     #frameContainer img {
       width: 100%;
       height: 100%;
       object-fit: contain;
+      display: block;
+    }
+
+    #playAudioBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 10;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      outline: 2px solid #fff;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <!-- Background Audio -->
-  <audio id="bgAudio" src="audio/background.m4a" loop autoplay></audio>
+  <audio id="bgAudio" src="audio/background.m4a" loop hidden></audio>
+  <button id="playAudioBtn">Play Audio</button>
+
+  <!-- Scroll-triggered Audio -->
+  <audio id="scrollAudio" src="audio/scroll.mp3" hidden></audio>
 
   <!-- Frame Container -->
   <div id="frameContainer">
@@ -45,23 +61,44 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   
   <script>
-    const totalFrames = 150; 
+    // --- CONFIG ---
+    const totalFrames = 150; // adjust if you have more/less
     const frameElement = document.getElementById("scrollFrame");
+    const bgAudio = document.getElementById("bgAudio");
+    const scrollAudio = document.getElementById("scrollAudio");
+    const playAudioBtn = document.getElementById("playAudioBtn");
+    let audioStarted = false;
 
-    // Pad numbers like 001, 002, 003...
+    // --- HELPERS ---
     function pad(num, size) {
       return String(num).padStart(size, "0");
     }
 
-    // Preload frames
-    const images = [];
-    for (let i = 1; i <= totalFrames; i++) {
-      const img = new Image();
-      img.src = `frames/ezgif-frame-${pad(i, 3)}.png`;
-      images.push(img);
+    function preloadImages() {
+      for (let i = 1; i <= totalFrames; i++) {
+        const img = new Image();
+        img.src = `frames/ezgif-frame-${pad(i, 3)}.png`;
+      }
     }
+    preloadImages();
 
-    // Register GSAP plugin
+    // --- BACKGROUND AUDIO CONTROL ---
+    playAudioBtn.addEventListener("click", () => {
+      bgAudio.play();
+      playAudioBtn.style.display = "none";
+      audioStarted = true;
+    });
+
+    window.addEventListener("scroll", function onFirstScroll() {
+      if (!audioStarted) {
+        bgAudio.play().catch(() => {});
+        playAudioBtn.style.display = "none";
+        audioStarted = true;
+        window.removeEventListener("scroll", onFirstScroll);
+      }
+    });
+
+    // --- SCROLL FRAMES + AUDIO ---
     gsap.registerPlugin(ScrollTrigger);
 
     let frame = { i: 1 };
@@ -72,14 +109,20 @@
       scrollTrigger: {
         scrub: true,
         start: "top top",
-        end: "bottom bottom"
-      },
-      onUpdate: () => {
-        let frameNum = pad(Math.round(frame.i), 3);
-        frameElement.src = `frames/ezgif-frame-${frameNum}.png`;
+        end: "bottom bottom",
+        onUpdate: (self) => {
+          // Update frame
+          let frameNum = pad(Math.round(frame.i), 3);
+          frameElement.src = `frames/ezgif-frame-${frameNum}.png`;
+
+          // Play scroll audio (trigger once per scroll activity)
+          if (self.isActive && scrollAudio.paused) {
+            scrollAudio.currentTime = 0;
+            scrollAudio.play().catch(() => {});
+          }
+        }
       }
     });
   </script>
 </body>
 </html>
-
